@@ -148,6 +148,11 @@ Source code lives in [`live-dashboard/plugin-src`](live-dashboard/plugin-src).
 The distributable plugin bundle lives in
 [`live-dashboard/com.personal.streamdock.livedashboard.sdPlugin`](live-dashboard/com.personal.streamdock.livedashboard.sdPlugin).
 
+Developer documentation:
+
+- [Release preparation and GitHub publishing](docs/RELEASING.md)
+- [Building StreamDock plugins (with a timer example)](docs/PLUGIN_DEVELOPMENT.md)
+
 ```powershell
 cd live-dashboard/plugin-src
 pnpm install --frozen-lockfile
