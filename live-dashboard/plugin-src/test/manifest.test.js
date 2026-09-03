@@ -30,4 +30,5 @@ test('visible actions use purpose prefixes and package version matches manifest'
     assert.equal(prefixes.has(action.Name.split(' ')[0]), true, action.Name);
   }
   assert.equal(manifest.Version, packageJson.version);
+  assert.equal(manifest.Name, 'Reynov Live Dashboard');
 });

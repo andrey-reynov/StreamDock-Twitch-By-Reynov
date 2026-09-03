@@ -1,4 +1,4 @@
-# StreamDock Twitch Live Dashboard
+# Reynov Live Dashboard
 
 A small personal Twitch and OBS dashboard for StreamDock devices. It was built
 and tested with **MiraBox HSV293-S / firmware V2.293S.00.003**.
@@ -69,24 +69,19 @@ only their own status or metric.
 ### Step 2 — Connect Twitch
 
 1. Select any action from this plugin to open its settings.
-2. Open the Twitch Developer Console from the provided button.
-3. Create an application if necessary:
-   - **Name:** `StreamDock Live Dashboard (Personal)`; append your channel name if it is already taken. This is the name Twitch shows under **Settings → Connections → Other Connections**;
-   - set OAuth Redirect URL to `http://localhost:3000`;
-   - **Category / Product:** `Application Integration`;
-   - **Client Type:** `Public`;
-   - copy the public **Client ID**.
-4. Paste the Client ID into StreamDock and click **Connect Twitch**.
-5. Approve access in the browser. If no browser opens, click
+2. Click **Connect Twitch**. The release uses the publisher-owned Public Twitch
+   application `Reynov Live Dashboard`; no developer registration or Client
+   Secret is required.
+3. Approve access in the browser. If no browser opens, click
    **Continue in browser** in the settings panel.
 
-If an existing application has an unclear connection name, rename it from
-**Manage** when available. Otherwise create a new Public application with the
-recommended friendly name, replace the Client ID, and reconnect.
+Developers can use a different Public Client ID from the collapsed **Advanced**
+section. Tokens created for one Client ID cannot be reused with another;
+disconnect and reconnect after changing it.
 
-The plugin uses Twitch Device Authorization and requests only
-`user:read:chat`. A Client Secret is not needed and must never be pasted into
-StreamDock.
+The plugin uses Twitch Device Authorization and requests `user:read:chat` plus
+`channel:manage:broadcast` for Moment Marker. A Client Secret is not needed and
+must never be pasted into StreamDock.
 
 ### Step 3 — Connect OBS
 
@@ -163,3 +158,5 @@ cd ../..
 ```
 
 Technical research and HSV293-S findings are in [RESEARCH.md](RESEARCH.md).
+See the [privacy notice](docs/PRIVACY.md) for details about local credentials
+and data processing.

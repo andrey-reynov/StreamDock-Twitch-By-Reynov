@@ -8,8 +8,11 @@
   reconnect guidance in Dashboard Setup.
 - Store authorization-format and plugin-version metadata for new Twitch logins.
 - Reject release tags whose commit has not already been merged into `main`.
-- Keep the publisher-owned, zero-setup Twitch Client ID postponed for a later
-  release.
+- Use the publisher-owned Public Client ID for one-click Twitch connection,
+  while retaining a custom Client ID under Advanced for developers.
+- Validate active Twitch OAuth sessions hourly and reject tokens issued to a
+  different Client ID.
+- Rename the plugin category to `Reynov Live Dashboard`.
 
 ## 0.9.0
 

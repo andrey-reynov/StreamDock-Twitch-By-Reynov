@@ -3,38 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>StreamDock Twitch Dashboard — Setup Guide</title>
+  <title>Reynov Live Dashboard — Setup Guide</title>
   <style>body{max-width:800px;margin:32px auto;padding:0 20px;background:#171717;color:#eee;font:15px/1.55 Arial,sans-serif}h1{color:#c4b5fd}h2{margin-top:30px;color:#a78bfa}code{padding:2px 5px;background:#333;border-radius:4px}li{margin:7px 0}.note{padding:12px;background:#2b2340;border-left:4px solid #9146ff}table{width:100%;border-collapse:collapse;margin:12px 0}th,td{padding:9px;border:1px solid #444;text-align:left;vertical-align:top}th{background:#303030;color:#c4b5fd}.ok{color:#86efac}.warn{color:#fcd34d}</style>
 </head>
 <body>
-  <h1>StreamDock Twitch Live Dashboard</h1>
+  <h1>Reynov Live Dashboard</h1>
   <p>This guide is bundled with the plugin, so it remains available before the GitHub repository is published.</p>
   <h2>Step 1 — Add Dashboard</h2>
-  <p>First drag <strong>Dashboard setup</strong> onto one normal LCD key. Select that action whenever you need to connect, disconnect, diagnose, or edit Twitch/OBS. It is the only action with the shared setup wizard.</p>
+  <p>First drag <strong>[SETUP] Dashboard</strong> onto one normal LCD key. Select that action whenever you need to connect, disconnect, diagnose, or edit Twitch/OBS. It is the only action with the shared setup wizard.</p>
   <p>Then drag <strong>Viewers</strong>, <strong>Chat messages</strong>, and <strong>Start / Stop stream</strong> onto normal LCD keys. The HSV293-S Info Board consists of three separate non-pressable Information slots; use Viewers, Chat, and passive OBS Status there. Keep Start / Stop on a pressable key.</p>
   <p>Other actions intentionally have no connection form. Before setup they display <strong>SETUP / USE SETUP</strong>; when ready, each action shows only its own metric or control state.</p>
   <h2>Step 2 — Connect Twitch</h2>
   <ol>
-    <li>Open any dashboard action's settings.</li>
-    <li>Use <strong>Open Developer Console</strong>, open <strong>Applications</strong>, then choose <strong>Register Your Application</strong>.</li>
-    <li>Fill the form exactly as shown below and press <strong>Create</strong>.</li>
+    <li>Click <strong>Connect Twitch</strong> in Dashboard setup.</li>
+    <li>Approve <strong>Reynov Live Dashboard</strong> in the browser.</li>
+    <li>Return to StreamDock and check the Diagnostics section.</li>
   </ol>
-  <table>
-    <tr><th>Twitch field</th><th>Enter / choose</th><th>Why</th></tr>
-    <tr><td><strong>Name</strong></td><td><code>StreamDock Live Dashboard (Personal)</code><br><small>If unavailable, add your channel name.</small></td><td>This is the friendly integration name shown later in Twitch Settings → Connections → Other Connections.</td></tr>
-    <tr><td><strong>OAuth Redirect URLs</strong></td><td><code>http://localhost:3000</code>, then click <strong>Add</strong></td><td>Twitch requires a redirect URL when registering the application. Device Authorization itself does not send tokens to this URL.</td></tr>
-    <tr><td><strong>Category / Product</strong></td><td><strong>Application Integration</strong></td><td>Best match for a local StreamDock dashboard.</td></tr>
-    <tr><td><strong>Client Type</strong></td><td><strong>Public</strong></td><td>The plugin runs locally and uses Device Authorization without a Client Secret.</td></tr>
-    <tr><td><strong>CAPTCHA</strong></td><td>Complete it yourself</td><td>Required by Twitch before Create is enabled.</td></tr>
-  </table>
-  <ol start="4">
-    <li>Back on <strong>Applications</strong>, find the new app and click <strong>Manage</strong>.</li>
-    <li>Copy <strong>Client ID</strong> and paste it into StreamDock.</li>
-    <li>Click <strong>Connect Twitch</strong>. If the browser does not open, use <strong>Continue in browser</strong>.</li>
-    <li>Approve the requested chat-read permission. StreamDock will show <span class="ok">✓ Connected as your_login</span> and collapse the completed step.</li>
-  </ol>
-  <p class="note"><strong>Do not click New Secret and never paste a Client Secret.</strong> The public Client ID is safe to use here; access and refresh tokens remain in local StreamDock settings.</p>
-  <p>If you already created the application under an unclear name, open it with <strong>Manage</strong> and rename it if Twitch allows editing. Otherwise create a new <strong>Public</strong> application with the friendly name above, replace the Client ID in StreamDock, and connect again.</p>
+  <p>The built-in publisher application uses Twitch Device Authorization. No developer registration or Client Secret is required. Access and refresh tokens remain in local StreamDock settings.</p>
+  <p class="note"><strong>Developers only:</strong> expand Advanced to use another Public Client ID. Disconnect before switching applications, because a token is bound to the Client ID that issued it. Never enter a Client Secret.</p>
   <h2>Step 3 — Connect OBS</h2>
   <ol>
     <li>In OBS open <strong>Tools → WebSocket Server Settings</strong>.</li>

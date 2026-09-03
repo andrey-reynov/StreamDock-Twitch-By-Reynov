@@ -1,12 +1,14 @@
 const WebSocket = require('ws');
 const { version: PLUGIN_VERSION } = require('../package.json');
+const { effectiveTwitchClientId } = require('./config');
 
 const DEVICE_URL = 'https://id.twitch.tv/oauth2/device';
 const TOKEN_URL = 'https://id.twitch.tv/oauth2/token';
 const VALIDATE_URL = 'https://id.twitch.tv/oauth2/validate';
 const EVENTSUB_URL = 'wss://eventsub.wss.twitch.tv/ws';
 const TWITCH_SCOPES = ['user:read:chat', 'channel:manage:broadcast'];
-const AUTH_FORMAT_VERSION = 1;
+const AUTH_FORMAT_VERSION = 2;
+const TOKEN_VALIDATION_INTERVAL_MS = 60 * 60 * 1000;
 
 function twitchActivationUrl(device) {
   const url = new URL(device.verification_uri || 'https://www.twitch.tv/activate');
@@ -35,7 +37,7 @@ class TwitchService {
 
   async configure(settings) {
     this.stop();
-    this.clientId = settings.twitchClientId?.trim();
+    this.clientId = effectiveTwitchClientId(settings);
     this.auth = settings.twitchAuth || {};
     this.scopes = Array.isArray(this.auth.scopes) ? this.auth.scopes : [];
     if (!this.clientId || !this.auth.accessToken) {
@@ -43,22 +45,8 @@ class TwitchService {
       return;
     }
     try {
-      await this.ensureToken();
-      let identity;
-      try {
-        identity = await jsonFetch(VALIDATE_URL, { headers: { Authorization: `OAuth ${this.auth.accessToken}` } });
-      } catch (error) {
-        if (error.status !== 401 || !this.auth.refreshToken) throw error;
-        await this.ensureToken(true);
-        identity = await jsonFetch(VALIDATE_URL, { headers: { Authorization: `OAuth ${this.auth.accessToken}` } });
-      }
-      this.userId = identity.user_id;
-      this.scopes = identity.scopes || [];
-      const enrichedAuth = { ...this.auth, scopes: this.scopes };
-      if (JSON.stringify(enrichedAuth) !== JSON.stringify(this.auth)) {
-        this.auth = enrichedAuth;
-        await this.saveAuth(this.auth);
-      }
+      const identity = await this.validateAccessToken();
+      await this.applyIdentity(identity);
       const userResult = await this.helixFetch(`https://api.twitch.tv/helix/users?id=${encodeURIComponent(this.userId)}`);
       const user = userResult.data?.[0] || {};
       let avatar = '';
@@ -74,12 +62,14 @@ class TwitchService {
       this.state.patch({ twitchConnected: true, twitchStatus: identity.login || 'CONNECTED', twitchDisplayName: user.display_name || identity.login || '', twitchAvatar: avatar, twitchMarkerAllowed: this.scopes.includes('channel:manage:broadcast') });
       await this.pollStream();
       this.viewerTimer = setInterval(() => this.pollStream().catch(error => this.fail(error)), 30000);
+      this.validationTimer = setInterval(() => this.validateSession().catch(error => this.fail(error)), TOKEN_VALIDATION_INTERVAL_MS);
       this.connectEventSub();
     } catch (error) { this.fail(error); }
   }
 
   stop() {
     clearInterval(this.viewerTimer);
+    clearInterval(this.validationTimer);
     clearTimeout(this.reconnectTimer);
     clearTimeout(this.keepaliveTimer);
     this.eventSocket?.close();
@@ -87,8 +77,7 @@ class TwitchService {
   }
 
   async startDeviceConnect(clientId, onCode) {
-    this.clientId = clientId?.trim();
-    if (!this.clientId) throw new Error('Enter Twitch Client ID first');
+    this.clientId = String(clientId || '').trim() || effectiveTwitchClientId();
     const scopes = TWITCH_SCOPES.join(' ');
     const form = new URLSearchParams({ client_id: this.clientId, scopes });
     const device = await jsonFetch(DEVICE_URL, { method: 'POST', body: form });
@@ -136,6 +125,7 @@ class TwitchService {
       refreshToken: token.refresh_token || this.auth.refreshToken,
       expiresAt: Date.now() + token.expires_in * 1000,
       scopes: token.scope || this.auth.scopes || [],
+      clientId: this.clientId,
       authorizedWithPluginVersion: this.auth.authorizedWithPluginVersion || PLUGIN_VERSION,
       authFormatVersion: AUTH_FORMAT_VERSION
     };
@@ -155,6 +145,43 @@ class TwitchService {
       })().finally(() => { this.refreshPromise = null; });
     }
     await this.refreshPromise;
+  }
+
+  async validateAccessToken() {
+    await this.ensureToken();
+    let identity;
+    try {
+      identity = await jsonFetch(VALIDATE_URL, { headers: { Authorization: `OAuth ${this.auth.accessToken}` } });
+    } catch (error) {
+      if (error.status !== 401 || !this.auth.refreshToken) throw error;
+      await this.ensureToken(true);
+      identity = await jsonFetch(VALIDATE_URL, { headers: { Authorization: `OAuth ${this.auth.accessToken}` } });
+    }
+    if (identity.client_id && identity.client_id !== this.clientId) {
+      throw Object.assign(new Error('Twitch token belongs to another application; reconnect required'), { status: 401 });
+    }
+    return identity;
+  }
+
+  async applyIdentity(identity) {
+    this.userId = identity.user_id;
+    this.scopes = identity.scopes || [];
+    const enrichedAuth = { ...this.auth, clientId: identity.client_id || this.clientId, scopes: this.scopes };
+    if (JSON.stringify(enrichedAuth) !== JSON.stringify(this.auth)) {
+      this.auth = enrichedAuth;
+      await this.saveAuth(this.auth);
+    }
+  }
+
+  async validateSession() {
+    const identity = await this.validateAccessToken();
+    await this.applyIdentity(identity);
+    this.state.patch({
+      twitchConnected: true,
+      twitchStatus: identity.login || 'CONNECTED',
+      twitchMarkerAllowed: this.scopes.includes('channel:manage:broadcast')
+    });
+    return identity;
   }
 
   headers() { return { Authorization: `Bearer ${this.auth.accessToken}`, 'Client-Id': this.clientId, 'Content-Type': 'application/json' }; }
@@ -249,8 +276,9 @@ class TwitchService {
     console.error('Twitch:', error.message);
     const message = String(error?.message || '').toLowerCase();
     const reconnect = error?.status === 401 || message.includes('token') || message.includes('oauth');
+    if (reconnect) this.stop();
     this.state.patch({ twitchConnected: false, twitchStatus: reconnect ? 'RECONNECT TWITCH' : 'TWITCH ERROR' });
   }
 }
 
-module.exports = { AUTH_FORMAT_VERSION, TwitchService, TWITCH_SCOPES, jsonFetch, twitchActivationUrl };
+module.exports = { AUTH_FORMAT_VERSION, TOKEN_VALIDATION_INTERVAL_MS, TwitchService, TWITCH_SCOPES, jsonFetch, twitchActivationUrl };

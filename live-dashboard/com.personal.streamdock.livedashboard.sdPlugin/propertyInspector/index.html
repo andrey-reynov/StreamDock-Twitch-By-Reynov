@@ -18,12 +18,16 @@
       <div id="twitchState" class="state">Not connected</div>
       <div id="markerPermission" class="status" hidden>Moment Marker needs one reconnect to grant Twitch marker permission.</div>
       <div id="twitchForm">
-        <div class="hint">First create a Twitch application. The full guide lists the exact value for every field.</div>
-        <label for="clientId">Public Twitch Client ID</label>
-        <input id="clientId" autocomplete="off" placeholder="Paste Client ID — never paste Client Secret">
-        <a class="authorize secondary" href="https://dev.twitch.tv/console/apps" target="_blank" rel="noopener">1. Open Developer Console</a>
-        <button id="connect" type="button">2. Connect Twitch</button>
+        <div class="hint">Connect with Reynov Live Dashboard. No Twitch developer setup or Client Secret is required.</div>
+        <button id="connect" type="button">Connect Twitch</button>
         <a id="authorize" class="authorize" target="_blank" rel="noopener" hidden>Continue in browser</a>
+        <details class="mini">
+          <summary>Advanced — use another Twitch application</summary>
+          <label for="clientId">Custom Public Client ID</label>
+          <input id="clientId" autocomplete="off" placeholder="Leave empty to use Reynov Live Dashboard">
+          <div class="hint">For developers and self-hosted builds only. Never enter a Client Secret.</div>
+          <a class="authorize secondary" href="https://dev.twitch.tv/console/apps" target="_blank" rel="noopener">Open Twitch Developer Console</a>
+        </details>
       </div>
       <button id="disconnectTwitch" class="danger" type="button" hidden>Disconnect Twitch</button>
     </div>

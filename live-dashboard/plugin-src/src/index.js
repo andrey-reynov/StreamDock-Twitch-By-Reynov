@@ -1,6 +1,7 @@
 const { StreamDockRuntime } = require('./runtime');
 const { DashboardState } = require('./state');
 const { AUTH_FORMAT_VERSION, TwitchService, TWITCH_SCOPES, twitchActivationUrl } = require('./twitch');
+const { effectiveTwitchClientId } = require('./config');
 const { version: PLUGIN_VERSION } = require('../package.json');
 const { ObsService } = require('./obs');
 const { PeakTracker } = require('./peak-tracker');
@@ -53,7 +54,7 @@ function dashboardSvg(customTitle = '') {
 }
 
 function render() {
-  const twitchConfigured = Boolean(runtime.globalSettings.twitchClientId && runtime.globalSettings.twitchAuth?.accessToken);
+  const twitchConfigured = Boolean(effectiveTwitchClientId(runtime.globalSettings) && runtime.globalSettings.twitchAuth?.accessToken);
   const obsConfigured = Boolean(runtime.globalSettings.obsUrl && runtime.globalSettings.obsPassword);
   for (const [context, action] of runtime.actions) {
     if (action === 'setup') {
@@ -209,7 +210,7 @@ async function configure(settings) {
     state.streamStartedAt = settings.session.startedAt;
     state.messages = settings.session.messages || 0;
   }
-  const config = JSON.stringify({ twitchClientId: settings.twitchClientId, twitchAuth: settings.twitchAuth, obsUrl: settings.obsUrl, obsPassword: settings.obsPassword });
+  const config = JSON.stringify({ twitchClientId: effectiveTwitchClientId(settings), twitchAuth: settings.twitchAuth, obsUrl: settings.obsUrl, obsPassword: settings.obsPassword });
   if (config === lastConfig) { render(); return; }
   lastConfig = config;
   await Promise.allSettled([twitch.configure(settings), obs.configure(settings)]);
@@ -264,7 +265,7 @@ runtime.onGlobalSettings = settings => {
     const cleaned = { ...settings };
     delete cleaned.twitchConnectRequest;
     runtime.setGlobalSettings(cleaned);
-    connectTwitch(settings.twitchClientId, connectRequest.context);
+    connectTwitch(effectiveTwitchClientId(settings), connectRequest.context);
     return;
   }
   const disconnectRequest = settings.twitchDisconnectRequest;
@@ -318,7 +319,7 @@ runtime.onSendToPlugin = async (payload, context) => {
     return;
   }
   if (payload.command !== 'connectTwitch') return;
-  await connectTwitch(payload.clientId || runtime.globalSettings.twitchClientId, context);
+  await connectTwitch(payload.clientId || effectiveTwitchClientId(runtime.globalSettings), context);
 };
 
 durationTimer = setInterval(render, 1000);

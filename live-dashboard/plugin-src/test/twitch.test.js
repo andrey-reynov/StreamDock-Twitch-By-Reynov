@@ -1,13 +1,20 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { DashboardState } = require('../src/state');
-const { AUTH_FORMAT_VERSION, TwitchService, twitchActivationUrl } = require('../src/twitch');
+const { AUTH_FORMAT_VERSION, TOKEN_VALIDATION_INTERVAL_MS, TwitchService, twitchActivationUrl } = require('../src/twitch');
+const { DEFAULT_TWITCH_CLIENT_ID, effectiveTwitchClientId } = require('../src/config');
 const { version: PLUGIN_VERSION } = require('../package.json');
 
 test('browser activation URL contains the device code without manual entry', () => {
   const url = twitchActivationUrl({ verification_uri: 'https://www.twitch.tv/activate', user_code: 'ABCD1234' });
   assert.equal(new URL(url).searchParams.get('device-code'), 'ABCD1234');
   assert.equal(new URL(url).searchParams.get('public'), 'true');
+});
+
+test('uses the publisher Twitch application unless a custom Client ID is set', () => {
+  assert.equal(effectiveTwitchClientId(), DEFAULT_TWITCH_CLIENT_ID);
+  assert.equal(effectiveTwitchClientId({ twitchClientId: ' custom-id ' }), 'custom-id');
+  assert.equal(TOKEN_VALIDATION_INTERVAL_MS, 60 * 60 * 1000);
 });
 
 test('missing credentials and expired tokens have distinct reconnect states', async () => {
@@ -114,8 +121,20 @@ test('Device Code Connect waits for authorization and persists the token pair', 
     assert.equal(saved.refreshToken, 'refresh');
     assert.equal(saved.authorizedWithPluginVersion, PLUGIN_VERSION);
     assert.equal(saved.authFormatVersion, AUTH_FORMAT_VERSION);
+    assert.equal(saved.clientId, 'public-client-id');
     assert.match(requests[0].body, /scopes=user%3Aread%3Achat/);
     assert.match(requests[1].body, /grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Adevice_code/);
+  } finally { global.fetch = originalFetch; }
+});
+
+test('hourly validation rejects a token issued to another Twitch application', async () => {
+  const originalFetch = global.fetch;
+  global.fetch = async () => ({ ok: true, json: async () => ({ client_id: 'different-client', user_id: '1', scopes: [] }) });
+  try {
+    const twitch = new TwitchService(new DashboardState(), async () => {});
+    twitch.clientId = 'expected-client';
+    twitch.auth = { accessToken: 'token', expiresAt: Date.now() + 60000 };
+    await assert.rejects(() => twitch.validateSession(), /another application/);
   } finally { global.fetch = originalFetch; }
 });
 

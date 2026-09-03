@@ -40,12 +40,13 @@ Status: Reconnect not required
   or the saved authorization format is obsolete.
 - Do not imply that every plugin update requires reconnecting Twitch.
 
-## Later: public zero-setup Twitch connection
+## Public zero-setup Twitch connection
 
-Postpone this until the GitHub repository and release process are ready.
+Implemented on `development` with the publisher-owned Public application
+`Reynov Live Dashboard`.
 
 - Register one publisher-owned Twitch Public Client named
-  `Twitch by Reynov (StreamDock)`.
+  `Reynov Live Dashboard`.
 - Ship its public Client ID as the plugin default.
 - Keep Client Secret out of the repository, plugin, profiles, and releases.
 - Present one normal `Connect Twitch` button using Device Code Flow; hide the
@@ -56,9 +57,8 @@ Postpone this until the GitHub repository and release process are ready.
 - Document that an inactive public-client refresh token may require reconnecting
   after an extended period.
 
-Before enabling this for releases, confirm that the Twitch application belongs
-to the publisher and is intended for public distribution. Do not publish a
-personal Client ID accidentally.
+The Client ID is intentionally public. Client Secrets and user tokens remain
+excluded from the repository and release artifacts.
 
 ## Branch and release policy
 
