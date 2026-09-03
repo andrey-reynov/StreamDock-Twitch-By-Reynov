@@ -3,7 +3,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.setup",
       "Icon": "static/icon.png",
-      "Name": "Dashboard setup",
+      "Name": "[SETUP] Dashboard",
       "Tooltip": "Connect Twitch and OBS, check readiness, and open the full guide",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "14", "FontStyle": "Bold" }],
       "Controllers": ["Keypad"],
@@ -14,7 +14,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.viewers",
       "Icon": "static/icon.png",
-      "Name": "Viewers",
+      "Name": "[TWITCH] Viewers",
       "Tooltip": "Live Twitch viewer count",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "14", "FontStyle": "Bold" }],
       "Controllers": ["Keypad", "Information"],
@@ -25,7 +25,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.messages",
       "Icon": "static/icon.png",
-      "Name": "Chat messages",
+      "Name": "[TWITCH] Chat",
       "Tooltip": "Messages since this Twitch stream started",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "14", "FontStyle": "Bold" }],
       "Controllers": ["Keypad", "Information"],
@@ -36,7 +36,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.stream",
       "Icon": "static/icon.png",
-      "Name": "Start / Stop stream",
+      "Name": "[OBS] Stream",
       "Tooltip": "Start or stop streaming through OBS WebSocket",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "14", "FontStyle": "Bold" }],
       "Controllers": ["Keypad"],
@@ -47,7 +47,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.record",
       "Icon": "static/icon.png",
-      "Name": "Start / Stop recording",
+      "Name": "[OBS] Record",
       "Tooltip": "Start or stop OBS recording",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "14", "FontStyle": "Bold" }],
       "Controllers": ["Keypad"],
@@ -58,7 +58,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.obsstatus",
       "Icon": "static/icon.png",
-      "Name": "OBS status",
+      "Name": "[OBS] Status",
       "Tooltip": "Display OBS connection and stream state",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "14", "FontStyle": "Bold" }],
       "Controllers": ["Information", "Keypad"],
@@ -69,7 +69,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.bitrate",
       "Icon": "static/icon.png",
-      "Name": "Stream bitrate",
+      "Name": "[OBS] Bitrate",
       "Tooltip": "Estimated current OBS stream bitrate in kbps",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "14", "FontStyle": "Bold" }],
       "Controllers": ["Information", "Keypad"],
@@ -80,7 +80,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.streamtime",
       "Icon": "static/icon.png",
-      "Name": "Stream time",
+      "Name": "[OBS] Stream Time",
       "Tooltip": "Current OBS stream output duration",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "14", "FontStyle": "Bold" }],
       "Controllers": ["Information", "Keypad"],
@@ -91,7 +91,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.recordtime",
       "Icon": "static/icon.png",
-      "Name": "Recording time",
+      "Name": "[OBS] Record Time",
       "Tooltip": "Current OBS recording duration",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "14", "FontStyle": "Bold" }],
       "Controllers": ["Information", "Keypad"],
@@ -102,7 +102,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.obsstats",
       "Icon": "static/icon.png",
-      "Name": "OBS health",
+      "Name": "[OBS] Health",
       "Tooltip": "OBS CPU, active FPS, and skipped output frames",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "10", "FontStyle": "Bold" }],
       "Controllers": ["Information", "Keypad"],
@@ -113,7 +113,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.audiocheck",
       "Icon": "static/icon.png",
-      "Name": "Audio — Track",
+      "Name": "[AUDIO] Track",
       "Tooltip": "One OBS audio track with Live + Peak or absolute range views",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "10", "FontStyle": "Bold" }],
       "Controllers": ["Information", "Keypad"],
@@ -124,7 +124,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.audiobalance",
       "Icon": "static/icon.png",
-      "Name": "Audio — Compare",
+      "Name": "[AUDIO] Compare",
       "Tooltip": "Compare two OBS audio tracks as a number, meters, or status",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "10", "FontStyle": "Bold" }],
       "Controllers": ["Information", "Keypad"],
@@ -159,7 +159,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.peakreset",
       "Icon": "static/icon.png",
-      "Name": "Reset Audio Peaks",
+      "Name": "[AUDIO] Reset Peaks",
       "Tooltip": "Reset held peaks on every dashboard audio block",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "10", "FontStyle": "Bold" }],
       "Controllers": ["Keypad"],
@@ -170,7 +170,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.twitchaccount",
       "Icon": "static/icon.png",
-      "Name": "Twitch account",
+      "Name": "[TWITCH] Account",
       "Tooltip": "Connected Twitch account avatar and status",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "10", "FontStyle": "Bold" }],
       "Controllers": ["Information", "Keypad"],
@@ -181,7 +181,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.timer",
       "Icon": "static/icon.png",
-      "Name": "Countdown timer",
+      "Name": "[TOOLS] Timer",
       "Tooltip": "Configurable countdown that continues below zero",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "10", "FontStyle": "Bold" }],
       "Controllers": ["Keypad"],
@@ -192,7 +192,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.marker",
       "Icon": "static/icon.png",
-      "Name": "Moment marker",
+      "Name": "[TWITCH] Marker",
       "Tooltip": "Create a Twitch stream marker and/or OBS recording chapter",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "10", "FontStyle": "Bold" }],
       "Controllers": ["Keypad"],
@@ -203,7 +203,7 @@
     {
       "UUID": "com.personal.streamdock.livedashboard.dashboard",
       "Icon": "static/icon.png",
-      "Name": "Info Board dashboard",
+      "Name": "[INFO] Dashboard",
       "Tooltip": "Compact live status for one HSV293-S Info Board slot",
       "States": [{ "Image": "static/key.png", "TitleAlignment": "center", "FontSize": "10", "FontStyle": "Bold" }],
       "Controllers": ["Information", "SecondaryScreen", "Keypad"],
@@ -221,7 +221,7 @@
   "Description": "Simple Twitch + OBS dashboard. Add Dashboard setup once to connect services; metric actions stay focused on their own display.",
   "Category": "Twitch Live Dashboard",
   "CategoryIcon": "static/icon.png",
-  "Version": "0.9.0",
+  "Version": "0.10.0",
   "OS": [{ "Platform": "windows", "MinimumVersion": "10" }, { "Platform": "mac", "MinimumVersion": "10.15" }],
   "Software": { "MinimumVersion": "3.10.188.226" },
   "Nodejs": { "Version": "20" }

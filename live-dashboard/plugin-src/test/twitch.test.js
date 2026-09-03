@@ -1,7 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { DashboardState } = require('../src/state');
-const { TwitchService, twitchActivationUrl } = require('../src/twitch');
+const { AUTH_FORMAT_VERSION, TwitchService, twitchActivationUrl } = require('../src/twitch');
+const { version: PLUGIN_VERSION } = require('../package.json');
 
 test('browser activation URL contains the device code without manual entry', () => {
   const url = twitchActivationUrl({ verification_uri: 'https://www.twitch.tv/activate', user_code: 'ABCD1234' });
@@ -111,6 +112,8 @@ test('Device Code Connect waits for authorization and persists the token pair', 
     assert.equal(tokenPolls, 2);
     assert.equal(auth.accessToken, 'access');
     assert.equal(saved.refreshToken, 'refresh');
+    assert.equal(saved.authorizedWithPluginVersion, PLUGIN_VERSION);
+    assert.equal(saved.authFormatVersion, AUTH_FORMAT_VERSION);
     assert.match(requests[0].body, /scopes=user%3Aread%3Achat/);
     assert.match(requests[1].body, /grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Adevice_code/);
   } finally { global.fetch = originalFetch; }
@@ -190,7 +193,23 @@ test('concurrent Twitch consumers share one single-use refresh-token exchange', 
     assert.equal(refreshCalls, 1);
     assert.equal(twitch.auth.accessToken, 'new-access');
     assert.equal(twitch.auth.refreshToken, 'new-refresh');
+    assert.equal(twitch.auth.authorizedWithPluginVersion, PLUGIN_VERSION);
+    assert.equal(twitch.auth.authFormatVersion, AUTH_FORMAT_VERSION);
   } finally { global.fetch = originalFetch; }
+});
+
+test('token refresh preserves authorization origin and refresh token when omitted', async () => {
+  const twitch = new TwitchService(new DashboardState(), async () => {});
+  twitch.auth = {
+    refreshToken: 'existing-refresh',
+    authorizedWithPluginVersion: '0.9.0',
+    authFormatVersion: AUTH_FORMAT_VERSION,
+    scopes: ['user:read:chat']
+  };
+  const record = twitch.tokenRecord({ access_token: 'new-access', expires_in: 100 });
+  assert.equal(record.refreshToken, 'existing-refresh');
+  assert.equal(record.authorizedWithPluginVersion, '0.9.0');
+  assert.deepEqual(record.scopes, ['user:read:chat']);
 });
 
 test('Helix retries once with a refreshed token after a stored token is rejected', async () => {

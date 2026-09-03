@@ -27,6 +27,10 @@ WebSocket password are user data and must never be included in a release.
 - permission to push tags to the GitHub repository;
 - a clean `main` branch synchronized with GitHub.
 
+Normal development happens on `development`. Merge tested changes into `main`
+before creating a version tag. The release workflow rejects a `v*` tag when its
+commit is not already contained in `origin/main`.
+
 Run all commands below from the repository root unless stated otherwise.
 
 ## 1. Choose and apply the version
@@ -75,7 +79,17 @@ Confirm that:
   development files are present;
 - the plugin starts in StreamDock and the main actions render correctly.
 
-## 3. Commit and publish the tag
+## 3. Merge development into main
+
+Open a pull request from `development` to `main`, wait for its checks, review
+the final diff, and merge it. Update the local branches before tagging:
+
+```powershell
+git switch main
+git pull --ff-only origin main
+```
+
+## 4. Commit and publish the tag
 
 ```powershell
 git status
@@ -92,7 +106,7 @@ Node.js bundle, packages the `.sdPlugin` directory, creates a GitHub Release,
 and attaches the ZIP. A manual `workflow_dispatch` run builds an artifact but
 does not create a tagged release.
 
-## 4. Fill in the GitHub Release
+## 5. Fill in the GitHub Release
 
 Open **GitHub → Releases → the new release → Edit** and use these fields:
 
@@ -136,7 +150,7 @@ settings are stored separately.
 - SHA-256: `PASTE_HASH_HERE`
 ```
 
-## 5. Verify the published release
+## 6. Verify the published release
 
 1. Confirm that the GitHub Actions run is green.
 2. Download the ZIP from the public Release page, not from the local `dist`

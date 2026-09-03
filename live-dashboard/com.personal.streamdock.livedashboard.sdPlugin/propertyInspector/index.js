@@ -21,6 +21,18 @@ function renderConnectionStatus() {
   byId('overallStatus').classList.toggle('pending', !(twitchConnected && obsConnected));
   if (twitchConnected) byId('twitchDetails').open = false;
   if (obsConnected) byId('obsDetails').open = false;
+  const scopes = Array.isArray(current.twitchScopes) ? current.twitchScopes : [];
+  const tokenPresent = Boolean(current.twitchTokenPresent || settings.twitchAuth?.accessToken);
+  const reconnectRequired = Boolean(current.twitchReconnectRequired);
+  byId('pluginVersion').textContent = `v${current.pluginVersion || '0.10.0'}`;
+  byId('authorizationVersion').textContent = tokenPresent
+    ? (current.twitchAuthorizationVersion ? `v${current.twitchAuthorizationVersion}` : 'Legacy')
+    : 'Not connected';
+  byId('scopeStatus').textContent = `Chat ${scopes.includes('user:read:chat') ? '✓' : '✗'} · Markers ${scopes.includes('channel:manage:broadcast') ? '✓' : '✗'}`;
+  byId('tokenStatus').textContent = current.twitchTokenValid ? 'Valid' : (tokenPresent ? (current.twitchLabel === 'RECONNECT TWITCH' ? 'Invalid' : 'Checking') : 'Not connected');
+  byId('reconnectStatus').textContent = reconnectRequired ? 'Reconnect required: authorization is old, invalid, or missing permissions.' : (twitchConnected ? 'Reconnect not required.' : 'Connect Twitch to enable diagnostics.');
+  byId('reconnectStatus').classList.toggle('warning', reconnectRequired);
+  byId('reconnectStatus').classList.toggle('good', twitchConnected && !reconnectRequired);
 }
 function apply(value) {
   settings = value || {};

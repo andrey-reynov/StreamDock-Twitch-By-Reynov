@@ -1,6 +1,9 @@
 # Roadmap
 
-## Next plugin update
+## Version 0.10 development update
+
+Implemented on the `development` branch. It must be tested there and merged to
+`main` before the release tag is created.
 
 ### Group the StreamDock action catalog
 
@@ -57,21 +60,13 @@ Before enabling this for releases, confirm that the Twitch application belongs
 to the publisher and is intended for public distribution. Do not publish a
 personal Client ID accidentally.
 
-## GitHub repository prerequisites
+## Branch and release policy
 
-Current local state: Git is initialized on `main`, but there are no commits and
-no remote configured yet.
-
-Before the first push:
-
-- choose the GitHub owner and repository name;
-- choose public or private visibility;
-- create or select the empty GitHub repository and provide its HTTPS URL;
-- choose a license for a public repository;
-- authenticate GitHub locally through the browser or Git credential manager;
-- review the initial commit, README, workflow, and release contents;
-- verify that no Twitch tokens, OBS passwords, configured profiles, logs, or
-  Client Secret are tracked.
+- Day-to-day changes are committed to `development`.
+- Test development builds directly; do not tag them as releases.
+- Merge a reviewed and tested update into `main`.
+- Create the `vX.Y.Z` tag only from the resulting `main` history.
+- The GitHub workflow verifies that a release tag belongs to `origin/main`.
 
 Never paste a GitHub password, Personal Access Token, Twitch token, or Client
 Secret into chat or commit it to the repository.

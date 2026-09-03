@@ -48,13 +48,13 @@ StreamDock's profile data and are not included in release archives.
 
 ### Step 1 — Add Dashboard actions
 
-First drag **Dashboard setup** onto one normal LCD key. Select that one action
+First drag **[SETUP] Dashboard** onto one normal LCD key. Select that one action
 whenever you need to connect, disconnect, diagnose, or edit Twitch/OBS. It is the
 only action that contains the shared connection wizard and full-guide link.
 
 Then drag the display/control actions you need onto existing StreamDock slots:
 
-- normal LCD keys: **Viewers**, **Chat messages**, **Start / Stop stream**;
+- normal LCD keys: **[TWITCH] Viewers**, **[TWITCH] Chat**, **[OBS] Stream**;
 - HSV293-S Info Board: **Viewers**, **Chat messages**, and **OBS status**;
 - optional: use **Info Board dashboard** for an all-in-one compact tile.
 
@@ -110,7 +110,7 @@ must disconnect and connect Twitch once to grant this additional permission.
 
 ### Action-specific settings
 
-The connection wizard remains exclusive to **Dashboard setup**. Actions that
+The connection wizard remains exclusive to **[SETUP] Dashboard**. Actions that
 genuinely need their own configuration have small focused panels:
 
 - Audio — Track: choose one input, its Freeze option, then Live + Peak or an absolute range view;

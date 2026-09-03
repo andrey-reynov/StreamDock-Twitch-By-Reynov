@@ -1,6 +1,7 @@
 const { StreamDockRuntime } = require('./runtime');
 const { DashboardState } = require('./state');
-const { TwitchService, twitchActivationUrl } = require('./twitch');
+const { AUTH_FORMAT_VERSION, TwitchService, TWITCH_SCOPES, twitchActivationUrl } = require('./twitch');
+const { version: PLUGIN_VERSION } = require('../package.json');
 const { ObsService } = require('./obs');
 const { PeakTracker } = require('./peak-tracker');
 const { audioAbsoluteMeterSvg, audioAbsoluteStatusSvg, audioAbsoluteSvg, audioBalanceMetersSvg, audioBalanceStatusSvg, audioBalanceSvg, audioMeterSvg, avatarSvg, compactMetric, escapeXml, formatDurationMs, formatTimerMs, healthSvg, keySvg, timerSvg } = require('./ui');
@@ -183,7 +184,19 @@ function syncConnectionStatus() {
     obsConnected: state.obsConnected,
     obsLabel: state.obsStatus,
     obsInputs: state.obsInputs,
-    twitchMarkerAllowed: state.twitchMarkerAllowed
+    twitchMarkerAllowed: state.twitchMarkerAllowed,
+    pluginVersion: PLUGIN_VERSION,
+    twitchAuthorizationVersion: runtime.globalSettings.twitchAuth?.authorizedWithPluginVersion || '',
+    twitchAuthFormatVersion: runtime.globalSettings.twitchAuth?.authFormatVersion || 0,
+    twitchScopes: twitch.scopes || runtime.globalSettings.twitchAuth?.scopes || [],
+    twitchRequiredScopes: TWITCH_SCOPES,
+    twitchTokenPresent: Boolean(runtime.globalSettings.twitchAuth?.accessToken),
+    twitchTokenValid: state.twitchConnected,
+    twitchReconnectRequired: Boolean(runtime.globalSettings.twitchAuth?.accessToken) && (
+      runtime.globalSettings.twitchAuth?.authFormatVersion !== AUTH_FORMAT_VERSION ||
+      TWITCH_SCOPES.some(scope => !(twitch.scopes || runtime.globalSettings.twitchAuth?.scopes || []).includes(scope)) ||
+      state.twitchStatus === 'RECONNECT TWITCH'
+    )
   };
   const serialized = JSON.stringify(connectionStatus);
   if (serialized === lastConnectionStatus) return;

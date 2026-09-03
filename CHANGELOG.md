@@ -1,5 +1,16 @@
 # Changelog
 
+## [Unreleased — 0.10.0]
+
+- Group StreamDock actions with `[SETUP]`, `[OBS]`, `[AUDIO]`, `[TWITCH]`,
+  `[TOOLS]`, and `[INFO]` menu prefixes without changing LCD labels or UUIDs.
+- Show plugin version, Twitch authorization version, scopes, token validity, and
+  reconnect guidance in Dashboard Setup.
+- Store authorization-format and plugin-version metadata for new Twitch logins.
+- Reject release tags whose commit has not already been merged into `main`.
+- Keep the publisher-owned, zero-setup Twitch Client ID postponed for a later
+  release.
+
 ## 0.9.0
 
 - Consolidated the catalog into Audio — Track, Audio — Compare, and Reset Audio Peaks.

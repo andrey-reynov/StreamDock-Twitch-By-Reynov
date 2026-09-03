@@ -1,10 +1,12 @@
 const WebSocket = require('ws');
+const { version: PLUGIN_VERSION } = require('../package.json');
 
 const DEVICE_URL = 'https://id.twitch.tv/oauth2/device';
 const TOKEN_URL = 'https://id.twitch.tv/oauth2/token';
 const VALIDATE_URL = 'https://id.twitch.tv/oauth2/validate';
 const EVENTSUB_URL = 'wss://eventsub.wss.twitch.tv/ws';
 const TWITCH_SCOPES = ['user:read:chat', 'channel:manage:broadcast'];
+const AUTH_FORMAT_VERSION = 1;
 
 function twitchActivationUrl(device) {
   const url = new URL(device.verification_uri || 'https://www.twitch.tv/activate');
@@ -27,6 +29,7 @@ class TwitchService {
     this.state = state;
     this.saveAuth = saveAuth;
     this.auth = {};
+    this.scopes = [];
     this.recentMessageIds = new Set();
   }
 
@@ -34,6 +37,7 @@ class TwitchService {
     this.stop();
     this.clientId = settings.twitchClientId?.trim();
     this.auth = settings.twitchAuth || {};
+    this.scopes = Array.isArray(this.auth.scopes) ? this.auth.scopes : [];
     if (!this.clientId || !this.auth.accessToken) {
       this.state.patch({ twitchConnected: false, twitchStatus: this.clientId ? 'CONNECT TWITCH' : 'SET CLIENT ID' });
       return;
@@ -50,6 +54,11 @@ class TwitchService {
       }
       this.userId = identity.user_id;
       this.scopes = identity.scopes || [];
+      const enrichedAuth = { ...this.auth, scopes: this.scopes };
+      if (JSON.stringify(enrichedAuth) !== JSON.stringify(this.auth)) {
+        this.auth = enrichedAuth;
+        await this.saveAuth(this.auth);
+      }
       const userResult = await this.helixFetch(`https://api.twitch.tv/helix/users?id=${encodeURIComponent(this.userId)}`);
       const user = userResult.data?.[0] || {};
       let avatar = '';
@@ -122,7 +131,14 @@ class TwitchService {
   }
 
   tokenRecord(token) {
-    return { accessToken: token.access_token, refreshToken: token.refresh_token, expiresAt: Date.now() + token.expires_in * 1000 };
+    return {
+      accessToken: token.access_token,
+      refreshToken: token.refresh_token || this.auth.refreshToken,
+      expiresAt: Date.now() + token.expires_in * 1000,
+      scopes: token.scope || this.auth.scopes || [],
+      authorizedWithPluginVersion: this.auth.authorizedWithPluginVersion || PLUGIN_VERSION,
+      authFormatVersion: AUTH_FORMAT_VERSION
+    };
   }
 
   async ensureToken(force = false) {
@@ -237,4 +253,4 @@ class TwitchService {
   }
 }
 
-module.exports = { TwitchService, TWITCH_SCOPES, jsonFetch, twitchActivationUrl };
+module.exports = { AUTH_FORMAT_VERSION, TwitchService, TWITCH_SCOPES, jsonFetch, twitchActivationUrl };
