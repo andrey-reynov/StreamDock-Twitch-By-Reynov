@@ -1,0 +1,16 @@
+{
+  "name": "streamdock-live-dashboard",
+  "version": "0.9.0",
+  "private": true,
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check src/index.js && node --check src/twitch.js && node --check src/obs.js",
+    "build": "ncc build src/index.js -m -o ../com.personal.streamdock.livedashboard.sdPlugin/plugin"
+  },
+  "dependencies": {
+    "obs-websocket-js": "^5.0.6",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": { "@vercel/ncc": "^0.38.3" }
+}

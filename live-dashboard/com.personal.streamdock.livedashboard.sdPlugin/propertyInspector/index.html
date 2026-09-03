@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body{font:13px Arial,sans-serif;color:#eee;background:#252525;margin:12px}.overall{margin-bottom:12px;padding:10px 12px;border-radius:8px;background:#202a24;border:1px solid #365540;color:#86efac;font-weight:700}.overall.pending{background:#302b20;border-color:#63552d;color:#fcd34d}.step{margin:0 0 12px;background:#303030;border:1px solid #454545;border-radius:8px;overflow:hidden}.step[open]{border-color:#66528f}.step summary{display:flex;align-items:center;gap:7px;padding:12px;cursor:pointer;list-style:none;font-size:15px;font-weight:700}.step summary::-webkit-details-marker{display:none}.step summary::after{content:'›';margin-left:auto;color:#aaa;font-size:20px;transform:rotate(90deg)}.step[open] summary::after{transform:rotate(-90deg)}.content{padding:0 12px 12px}.number{display:inline-grid;place-items:center;flex:0 0 22px;width:22px;height:22px;border-radius:50%;background:#9146ff;font-size:12px}.check{margin-left:auto;color:#86efac;font-size:12px}.step summary::after{margin-left:5px}.state{margin:0 0 8px;color:#fcd34d;font-weight:700}.state.connected{color:#86efac}label{display:block;margin:9px 0 4px;font-weight:700}input{box-sizing:border-box;width:100%;padding:7px;background:#444;border:1px solid #666;color:#fff;border-radius:4px}button,.authorize,.guide{display:inline-block;box-sizing:border-box;margin-top:9px;padding:8px 10px;background:#9146ff;color:#fff;border:0;border-radius:4px;cursor:pointer;text-decoration:none;font-weight:700}.secondary{background:#505050}.danger{background:#733}.authorize{display:block;text-align:center}.guide{display:block;margin-top:12px;text-align:center;background:transparent;border:1px solid #777}[hidden]{display:none!important}.hint{color:#bbb;font-size:12px;line-height:1.45}.status{margin:8px 0;color:#c4b5fd;white-space:pre-wrap}.done{color:#86efac}.mini{font-size:11px;color:#999;margin-top:7px}
+  </style>
+</head>
+<body>
+  <div id="overallStatus" class="overall pending">Setup in progress — complete Twitch and OBS</div>
+  <details class="step" open>
+    <summary><span class="number">1</span>Add Dashboard <span class="check">✓ Ready</span></summary>
+    <div class="content"><div class="hint">Drag control actions onto normal LCD keys. All read-only metrics can be placed on either normal keys or HSV293-S Info Board slots.</div><div class="status done">✓ This action is already on your StreamDock.</div><label for="customTitle">Custom LCD title</label><input id="customTitle" maxlength="40" placeholder="DASHBOARD"><button id="saveTitle" type="button" class="secondary">Save title</button></div>
+  </details>
+  <details id="twitchDetails" class="step" open>
+    <summary><span class="number">2</span>Connect Twitch <span id="twitchCheck" class="check"></span></summary>
+    <div class="content">
+      <div id="twitchState" class="state">Not connected</div>
+      <div id="markerPermission" class="status" hidden>Moment Marker needs one reconnect to grant Twitch marker permission.</div>
+      <div id="twitchForm">
+        <div class="hint">First create a Twitch application. The full guide lists the exact value for every field.</div>
+        <label for="clientId">Public Twitch Client ID</label>
+        <input id="clientId" autocomplete="off" placeholder="Paste Client ID — never paste Client Secret">
+        <a class="authorize secondary" href="https://dev.twitch.tv/console/apps" target="_blank" rel="noopener">1. Open Developer Console</a>
+        <button id="connect" type="button">2. Connect Twitch</button>
+        <a id="authorize" class="authorize" target="_blank" rel="noopener" hidden>Continue in browser</a>
+      </div>
+      <button id="disconnectTwitch" class="danger" type="button" hidden>Disconnect Twitch</button>
+    </div>
+  </details>
+  <details id="obsDetails" class="step" open>
+    <summary><span class="number">3</span>Connect OBS <span id="obsCheck" class="check"></span></summary>
+    <div class="content">
+      <div id="obsState" class="state">Not connected</div>
+      <div class="hint">In OBS: Tools → WebSocket Server Settings → Enable WebSocket server.</div>
+      <label for="obsUrl">OBS WebSocket URL</label>
+      <input id="obsUrl" value="ws://127.0.0.1:4455">
+      <label for="obsPassword">OBS WebSocket password</label>
+      <input id="obsPassword" type="password">
+      <button id="save" type="button">Save &amp; test OBS</button>
+      <div class="mini">When connected, collapse this step. Open it again any time to edit the URL or password.</div>
+    </div>
+  </details>
+  <div id="status" class="status"></div>
+  <a class="guide" href="guide.html" target="_blank">Open full setup guide</a>
+  <script src="index.js"></script>
+</body>
+</html>

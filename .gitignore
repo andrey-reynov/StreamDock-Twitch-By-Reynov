@@ -1,0 +1,7 @@
+**/node_modules/
+upstream-plugin-sdk/
+upstream-device-sdk/
+*.log
+.pnpm-store/
+poc/
+dist/
